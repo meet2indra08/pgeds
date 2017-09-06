@@ -1,0 +1,1 @@
+E:\SOA\codebase\SOA\servicemanagement>java -jar target\servicemanagement-1.0.0-SNAPSHOT.jar server servicemanagement.yml

@@ -1,0 +1,65 @@
+
+Order one machine with docker installation:
+ 
+1.Install virtual box
+
+ # cd /etc/yum.repos.d/
+ # wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo
+ # yum update
+ # yum install binutils qt gcc make patch libgomp glibc-headers glibc-devel kernel-headers kernel-devel dkms
+ # yum install VirtualBox-5.1
+
+2.Create docker machine:
+
+ #docker-machine create --driver virtualbox default
+
+3.Enable tcp port:
+
+ #docker run -p 2376:2376 -d -v /var/run/docker.sock:/var/run/docker.sock verb/socat:alpine TCP-LISTEN:2376,reuseaddr,fork        UNIX-CLIENT:/var/run/docker.sock 
+ 
+ 
+4.Set the plugin in maven:
+
+    <plugin>
+      			<groupId>com.spotify</groupId>
+     			<artifactId>docker-maven-plugin</artifactId>
+     			<version>1.0.0</version>
+     			 <configuration>
+     			   <imageName>alertmanagementimage</imageName>
+      			   <baseImage>java</baseImage>
+        			<entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+   	   			 	   <resources>
+    	    			   <resource>
+             					<targetPath>/</targetPath>
+             					<directory>${project.build.directory}</directory>
+             					<include>${project.build.finalName}.jar</include>
+            				</resource>
+            				<resource>
+                        		<targetPath>/</targetPath>
+                        		<directory>${project.basedir}</directory>
+                        		<include>configuration.yml</include>
+                    		</resource>
+        				</resources>
+        				<useConfigFile>true</useConfigFile>
+      			</configuration>
+      			
+   	</plugin> 
+ 
+ 
+4.Run the commands : where the code reside
+
+   
+
+ # set DOCKER_HOST=tcp://erwsa01-u199852:2376
+
+ # mvn clean
+ 
+ # mvn package
+ 
+ # mvn docker:build
+ 
+5.To run docker image:
+
+ #docker run -p 8080:8080 -t alertmanagementimage server configuration.yml
+
+ 
